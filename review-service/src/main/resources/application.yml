@@ -1,0 +1,27 @@
+server:
+  port: 8081
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 15
+    leaseExpirationDurationInSeconds: 5
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_SERVER_HOST:localhost}:8761/eureka/
+
+spring:
+  application:
+    name: review-service
+
+management:
+  security:
+    enabled: false
+
+service:
+  defaultMinMs: 0
+  defaultMaxMs: 0
+
+#logging:
+#  level:
+#    root: WARN
+

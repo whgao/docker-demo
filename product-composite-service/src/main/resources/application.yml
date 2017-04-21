@@ -1,0 +1,59 @@
+server:
+  port: 8082
+
+info:
+  component: Product Composite Service
+
+#hystrix:
+#  threadpool:
+#    default:
+#      # Maximum number of concurrent requests when using thread pools (Default: 10)
+#      coreSize: 100
+#      # Maximum LinkedBlockingQueue size - -1 for using SynchronousQueue (Default: -1)
+#      maxQueueSize: -1
+#      # Queue size rejection threshold (Default: 5)
+#      queueSizeRejectionThreshold: 5
+#  command:
+#    default:
+#      circuitBreaker:
+#        sleepWindowInMilliseconds: 30000
+#        requestVolumeThreshold: 2
+#      execution:
+#        isolation:
+#          strategy: SEMAPHORE, no thread pool but timeout handling stops to work
+#          strategy: THREAD
+#          thread:
+#            timeoutInMilliseconds: 4000
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 15
+    leaseExpirationDurationInSeconds: 5
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_SERVER_HOST:localhost}:8761/eureka/
+#    healthcheck:
+#      enabled: true
+#    lease:
+#      duration: 5
+
+spring:
+  application:
+    name: product-composite-service
+
+management:
+  security:
+    enabled: false
+
+
+#ribbon:
+#  ConnectTimeout: 100
+#  ReadTimeout: 3000
+
+
+logging:
+  level:
+    root: WARN
+    org.exampledriven: DEBUG
+    # Set DEBUG level on Hystrix to get an error message when a fallback method is used.
+    com.netflix.hystrix: DEBUG
