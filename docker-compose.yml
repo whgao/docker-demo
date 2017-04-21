@@ -1,0 +1,38 @@
+version: '3'
+services:
+  eureka-server:
+    image: whgao/eureka-server
+    ports:
+     - "8761:8761"
+
+  zuul-server:
+    image: whgao/zuul-server
+    ports:
+     - "9090:9090"
+    environment:
+      EUREKA_SERVER_HOST: eureka-server
+    depends_on:
+     - eureka-server
+
+  product-service:
+    image: whgao/product-service
+    environment:
+      EUREKA_SERVER_HOST: eureka-server
+    depends_on:
+     - eureka-server
+
+  review-service:
+    image: whgao/review-service
+    environment:
+      EUREKA_SERVER_HOST: eureka-server
+    depends_on:
+     - eureka-server
+
+  product-composite-service:
+    image: whgao/product-composite-service
+    environment:
+      EUREKA_SERVER_HOST: eureka-server
+    depends_on:
+     - eureka-server
+     - product-service
+     - review-service
