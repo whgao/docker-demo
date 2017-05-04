@@ -55,6 +55,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
+			<!-- 
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -62,8 +63,8 @@
                 <configuration>
                     <imageName>whgao/${project.artifactId}</imageName>
                     <baseImage>java:8</baseImage>
+                    <env>JAVA_OPTS=""</env>
                     <entryPoint>["java", "$JAVA_OPTS", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
-                    <!-- copy the service's jar file from target into the root directory of the image -->
                     <resources>
                         <resource>
                             <targetPath>/</targetPath>
@@ -82,7 +83,57 @@
                     </execution>
                 </executions>
             </plugin>
+             -->
+             
         </plugins>
     </build>
 
+	<profiles>
+    	<profile>
+	        <id>docker</id>
+    	    <build>
+        	    <plugins>
+            	    <plugin>
+                	    <groupId>io.fabric8</groupId>
+                    	<artifactId>docker-maven-plugin</artifactId>
+	                    <version>0.19.0</version>
+    	                <configuration>
+        	                <images>
+            	                <image>
+                	                <name>whgao/${project.artifactId}</name>
+                    	            <build>
+                        	            <from>java:8</from>
+                            	        <assembly>
+                            	        	<targetDir>/</targetDir>
+                                	        <descriptorRef>artifact</descriptorRef>
+                                    	</assembly>
+                                    	<env>
+                                    		<JAVA_OPTS></JAVA_OPTS>
+                                    	</env>
+                                    	<entryPoint>
+											<exec>
+												<arg>java</arg>
+												<arg>$JAVA_OPTS</arg>
+										    	<arg>-jar</arg>
+										    	<arg>/${project.build.finalName}.jar</arg>
+											</exec>
+										</entryPoint>
+    	                            </build>
+                            	</image>
+	                        </images>
+    	                </configuration>
+        	            <executions>
+            	            <execution>
+                	            <id>docker:build</id>
+                    	        <phase>package</phase>
+                        	    <goals>
+                            	    <goal>build</goal>
+	                            </goals>
+    	                    </execution>
+        	            </executions>
+            	    </plugin>
+	            </plugins>
+    	    </build>
+    	</profile>
+	</profiles>
 </project>
