@@ -1,0 +1,18 @@
+<configuration>
+	<!--
+	<include resource="org/springframework/boot/logging/logback/base.xml" />
+	
+	<property resource="application.yml" />
+	-->
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+			<customFields>{"appName": "${appName:--}"}</customFields>
+		</encoder>
+    </appender>
+    <logger name="jsonLogger" additivity="false" level="DEBUG">
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <root level="INFO">
+        <appender-ref ref="consoleAppender"/>
+    </root>
+</configuration>

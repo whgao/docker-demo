@@ -4,6 +4,9 @@ services:
     image: whgao/eureka-server
     ports:
      - "8761:8761"
+     - "7080:7080"
+    environment:
+      JAVA_OPTS: "-Xmx64m -Xms64m -XX:MaxMetaspaceSize=64m -Dcom.sun.management.jmxremote.port=7080 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.rmi.port=7080 -Djava.rmi.server.hostname=127.0.0.1"
     logging:
       driver: syslog
       options: 
@@ -11,15 +14,24 @@ services:
         syslog-facility: daemon
         syslog-format: rfc5424
         tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
-        
+    deploy:
+      resources:
+        limits:
+          memory: 192m
+    
   zuul-server:
     image: whgao/zuul-server
     ports:
      - "9090:9090"
+     - "7081:7081"
     environment:
       EUREKA_SERVER_HOST: eureka-server
+      JAVA_OPTS: "-Xmx64m -Xms64m -XX:MaxMetaspaceSize=64m -Dcom.sun.management.jmxremote.port=7081 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.rmi.port=7081 -Djava.rmi.server.hostname=127.0.0.1"
     depends_on:
      - eureka-server
+     - product-service
+     - review-service
+     - product-composite-service
     logging:
       driver: syslog
       options: 
@@ -27,11 +39,18 @@ services:
         syslog-facility: daemon
         syslog-format: rfc5424
         tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
-        
+    deploy:
+      resources:
+        limits:
+          memory: 192m
+    
   product-service:
     image: whgao/product-service
+    ports:
+     - "7082:7082"
     environment:
       EUREKA_SERVER_HOST: eureka-server
+      JAVA_OPTS: "-Xmx64m -Xms64m -XX:MaxMetaspaceSize=64m -Dcom.sun.management.jmxremote.port=7082 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.rmi.port=7082 -Djava.rmi.server.hostname=127.0.0.1"
     depends_on:
      - eureka-server
     logging:
@@ -41,11 +60,19 @@ services:
         syslog-facility: daemon
         syslog-format: rfc5424
         tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
-        
+    deploy:
+      resources:
+        limits:
+          memory: 192m    
+          
+         
   review-service:
     image: whgao/review-service
+    ports:
+      - "7083:7083"
     environment:
       EUREKA_SERVER_HOST: eureka-server
+      JAVA_OPTS: "-Xmx64m -Xms64m -XX:MaxMetaspaceSize=64m -Dcom.sun.management.jmxremote.port=7083 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.rmi.port=7083 -Djava.rmi.server.hostname=127.0.0.1"
     depends_on:
      - eureka-server
     logging:
@@ -55,11 +82,18 @@ services:
         syslog-facility: daemon
         syslog-format: rfc5424
         tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
-
+    deploy:
+      resources:
+        limits:
+          memory: 192m
+          
   product-composite-service:
     image: whgao/product-composite-service
+    ports:
+       - "7084:7084"
     environment:
       EUREKA_SERVER_HOST: eureka-server
+      JAVA_OPTS: "-Xmx64m -Xms64m -XX:MaxMetaspaceSize=64m -Dcom.sun.management.jmxremote.port=7084 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.rmi.port=7084 -Djava.rmi.server.hostname=127.0.0.1"
     depends_on:
      - eureka-server
      - product-service
@@ -71,3 +105,8 @@ services:
         syslog-facility: daemon
         syslog-format: rfc5424
         tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+    deploy:
+      resources:
+        limits:
+          memory: 192m
+          

@@ -41,6 +41,12 @@
             <artifactId>review-schema</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+		
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>4.7</version>
+		</dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -71,34 +77,49 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.4.10</version>
-                <configuration>
-                    <imageName>whgao/${project.artifactId}</imageName>
-                    <baseImage>java:8</baseImage>
-                    <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
-                    <!-- copy the service's jar file from target into the root directory of the image -->
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>build-image</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
+	
+	<profiles>
+    	<profile>
+	        <id>docker</id>
+    	    <build>
+        	    <plugins>
+            	    <plugin>
+                	    <groupId>io.fabric8</groupId>
+                    	<artifactId>docker-maven-plugin</artifactId>
+	                    <version>0.19.0</version>
+    	                <configuration>
+        	                <images>
+            	                <image>
+                	                <name>whgao/${project.artifactId}</name>
+                    	            <build>
+                        	            <from>java:8</from>
+                            	        <assembly>
+                            	        	<targetDir>/</targetDir>
+                                	        <descriptorRef>artifact</descriptorRef>
+                                    	</assembly>
+                                    	<env>
+                                    		<JAVA_OPTS>-Xmx512m</JAVA_OPTS>
+                                    	</env>
+                                    	<entryPoint>java $JAVA_OPTS -jar /${project.build.finalName}.jar</entryPoint>
+    	                            </build>
+                            	</image>
+	                        </images>
+    	                </configuration>
+        	            <executions>
+            	            <execution>
+                	            <id>docker:build</id>
+                    	        <phase>package</phase>
+                        	    <goals>
+                            	    <goal>build</goal>
+	                            </goals>
+    	                    </execution>
+        	            </executions>
+            	    </plugin>
+	            </plugins>
+    	    </build>
+    	</profile>
+	</profiles>
+	
 </project>
